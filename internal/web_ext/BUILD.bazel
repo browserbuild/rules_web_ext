@@ -1,0 +1,41 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+
+licenses(["notice"])  # Apache 2.0
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files(
+    ["web_ext.bzl"],
+    visibility = ["//:__subpackages__"],
+)
+
+bzl_library(
+    name = "bzl",
+    srcs = glob(["*.bzl"]) + ["@bazel_tools//tools:bzl_srcs"],
+)
+
+nodejs_binary(
+    name = "build_artifact",
+    entry_point = ":artifact.js",
+    node_modules = "@build_bazel_rules_browserbuild_web_ext_deps//:node_modules",
+    templated_args = ["--nobazel_run_linker"],
+)
+
+nodejs_binary(
+    name = "crx_bin",
+    data = [
+        ":crx.js",
+        ":crx3.pb.js",
+    ],
+    entry_point = ":crx.js",
+    node_modules = "@build_bazel_rules_browserbuild_web_ext_deps//:node_modules",
+    templated_args = ["--nobazel_run_linker"],
+)
+
+nodejs_binary(
+    name = "zip_bin",
+    entry_point = ":zip.js",
+    node_modules = "@build_bazel_rules_browserbuild_web_ext_deps//:node_modules",
+    templated_args = ["--nobazel_run_linker"],
+)

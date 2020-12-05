@@ -1,0 +1,21 @@
+load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+licenses(["notice"])  # Apache 2.0
+
+package(default_visibility = ["//visibility:public"])
+
+exports_files([
+    "LICENSE",
+    "index.bzl",
+    "tsconfig.json",
+])
+
+bzl_library(
+    name = "bzl",
+    srcs = [
+        "index.bzl",
+    ],
+    deps = [
+        "//internal:bzl",
+    ],
+)

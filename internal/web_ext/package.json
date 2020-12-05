@@ -1,0 +1,12 @@
+{
+  "description": "@browserbuild/build_bazel_rules_browserbuild_web_ext_deps",
+  "dependencies": {
+    "minimist": "1.2.5",
+    "protobufjs": "6.10.2"
+  },
+  "devDependencies": {
+    "@bazel/jasmine": "^2.3.1",
+    "jasmine": "^3.6.3"
+  },
+  "private": true
+}

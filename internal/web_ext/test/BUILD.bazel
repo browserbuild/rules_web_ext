@@ -1,0 +1,92 @@
+load("@build_bazel_rules_browserbuild_web_ext_deps//@bazel/jasmine:index.bzl", "jasmine_node_test")
+load("@build_bazel_rules_nodejs//:index.bzl", "js_library")
+load("//internal/web_ext:web_ext.bzl", "web_ext")
+
+js_library(
+    name = "foo",
+    srcs = ["foo.js"],
+)
+
+web_ext(
+    name = "test_rsa_web_ext",
+    srcs = [
+        ":foo",
+        ":static_file",
+        ":subdirectory/data.json",
+    ],
+    crx_key = ":rsa.pem",
+    manifest = ":manifest_foo.json",
+    strip_prefix = "/internal/web_ext/test",
+)
+
+web_ext(
+    name = "test_ecdsa_web_ext",
+    srcs = [
+        ":foo",
+        ":static_file",
+        ":subdirectory/data.json",
+    ],
+    crx_key = ":ecdsa.pem",
+    manifest = ":manifest_foo.json",
+    strip_prefix = "/internal/web_ext/test",
+)
+
+web_ext(
+    name = "test_zip_web_ext",
+    srcs = [
+        ":foo",
+        ":static_file",
+        ":subdirectory/data.json",
+    ],
+    manifest = ":manifest_foo.json",
+    strip_prefix = "/internal/web_ext/test",
+)
+
+web_ext(
+    name = "test_rsa_crx_web_ext",
+    srcs = [
+        ":foo",
+        ":static_file",
+        ":subdirectory/data.json",
+    ],
+    crx_key = ":rsa.pem",
+    manifest = ":manifest_foo.json",
+    strip_prefix = "/internal/web_ext/test",
+    zip = False,
+)
+
+web_ext(
+    name = "test_ecdsa_crx_web_ext",
+    srcs = [
+        ":foo",
+        ":static_file",
+        ":subdirectory/data.json",
+    ],
+    crx_key = ":ecdsa.pem",
+    manifest = ":manifest_foo.json",
+    strip_prefix = "/internal/web_ext/test",
+    zip = False,
+)
+
+jasmine_node_test(
+    name = "test",
+    srcs = [
+        ":web_ext.spec.js",
+        "//internal/web_ext:crx3.pb.js",
+    ],
+    data = [
+        ":ecdsa.pem",
+        ":rsa.pem",
+        ":test_ecdsa_web_ext",
+        ":test_rsa_web_ext",
+    ],
+    templated_args = [
+        "$(locations //internal/web_ext/test:test_rsa_web_ext)",
+        "$(locations //internal/web_ext/test:test_ecdsa_web_ext)",
+        "$(locations //internal/web_ext/test:rsa.pem)",
+        "$(locations //internal/web_ext/test:ecdsa.pem)",
+    ],
+    deps = [
+        "@build_bazel_rules_browserbuild_web_ext_deps//protobufjs",
+    ],
+)

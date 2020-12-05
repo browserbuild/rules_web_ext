@@ -1,0 +1,11 @@
+load("@io_bazel_stardoc//stardoc:stardoc.bzl", "stardoc")
+
+stardoc(
+    name = "docs",
+    out = "index.md",
+    input = "//internal/web_ext:web_ext.bzl",
+    symbol_names = ["web_ext"],
+    deps = [
+        "//internal/web_ext:bzl",
+    ],
+)
