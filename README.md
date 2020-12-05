@@ -6,9 +6,29 @@ Package web extensions with Bazel
 
 ## Documentation
 
+* [Setup](#setup)
 * [Example](#example)
 * [Environment variables](#environment-variables)
 * [web_ext](#web_ext)
+
+## Setup
+
+```bzl
+http_archive(
+    name = "build_bazel_rules_web_ext",
+    sha256 = "256e4ae0045a91bee9b282a1fa34a1311a56967ca32653426f7b55ef3ef045a1",
+    strip_prefix = "rules_web_ext-0.1.0",
+    url = "https://github.com/browserbuild/rules_web_ext/archive/0.1.0.tar.gz",
+)
+
+load("@build_bazel_rules_web_ext//:package.bzl", "rules_browserbuild_dependencies")
+
+rules_browserbuild_dependencies()
+
+load("@build_bazel_rules_web_ext//:index.bzl", "browserbuild_setup_workspace")
+
+browserbuild_setup_workspace()
+```
 
 ## Example
 
