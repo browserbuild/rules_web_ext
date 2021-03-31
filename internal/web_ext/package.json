@@ -5,8 +5,8 @@
     "protobufjs": "6.10.2"
   },
   "devDependencies": {
-    "@bazel/jasmine": "^2.3.1",
-    "jasmine": "^3.6.3"
+    "@bazel/jasmine": "^3.2.3",
+    "jasmine": "^3.7.0"
   },
   "private": true
 }
