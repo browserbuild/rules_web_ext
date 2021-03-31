@@ -15,9 +15,9 @@ Package web extensions with Bazel
 ```bzl
 http_archive(
     name = "build_bazel_rules_web_ext",
-    sha256 = "256e4ae0045a91bee9b282a1fa34a1311a56967ca32653426f7b55ef3ef045a1",
-    strip_prefix = "rules_web_ext-0.1.0",
-    url = "https://github.com/browserbuild/rules_web_ext/archive/0.1.0.tar.gz",
+    sha256 = "aca8e53ad9aa7be5eab2a7be3f3344af2d22269d92cfb75c21ad17d726f3020f",
+    strip_prefix = "rules_web_ext-0.2.0",
+    url = "https://github.com/browserbuild/rules_web_ext/archive/0.2.0.tar.gz",
 )
 
 load("@build_bazel_rules_web_ext//:package.bzl", "rules_browserbuild_dependencies")
