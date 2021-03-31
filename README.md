@@ -8,7 +8,6 @@ Package web extensions with Bazel
 
 * [Setup](#setup)
 * [Example](#example)
-* [Environment variables](#environment-variables)
 * [web_ext](#web_ext)
 
 ## Setup
@@ -47,6 +46,14 @@ web_ext(
     manifest = ":manifest.json",
 )
 ```
+
+
+## web_ext
+
+<pre>
+web_ext(<a href="#web_ext-name">name</a>, <a href="#web_ext-compression">compression</a>, <a href="#web_ext-crx_key">crx_key</a>, <a href="#web_ext-manifest">manifest</a>, <a href="#web_ext-srcs">srcs</a>, <a href="#web_ext-strip_prefix">strip_prefix</a>, <a href="#web_ext-zip">zip</a>)
+</pre>
+
 
 
 **ATTRIBUTES**
