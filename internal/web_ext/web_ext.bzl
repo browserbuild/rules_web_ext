@@ -32,43 +32,36 @@ def _create_artifact(ctx, inputs, arg_file):
     )
 
 def _create_crx(ctx):
-    path = ctx.actions.declare_file("%s.crx" % ctx.label.name)
+    crx_artifact = ctx.actions.declare_file("%s.crx" % ctx.label.name)
 
     args = ctx.actions.args()
     args.add(ctx.outputs.artifact.path)
-    args.add("-o", path)
+    args.add("-o", crx_artifact)
     args.add("-c", ctx.attr.compression)
     args.add("--key", ctx.file.crx_key)
 
     ctx.actions.run(
-        mnemonic = "PackageCrx",
         executable = ctx.executable._build_crx,
         inputs = [ctx.file.crx_key] + [ctx.outputs.artifact],
-        outputs = [path],
+        outputs = [crx_artifact],
         arguments = [args],
         use_default_shell_env = True,
+        mnemonic = "PackageCrx",
     )
 
-    return path
+    return crx_artifact
 
 def _create_zip(ctx):
-    path = ctx.actions.declare_file("%s.zip" % ctx.label.name)
+    zip_artifact = ctx.actions.declare_file("%s.zip" % ctx.label.name)
 
-    args = ctx.actions.args()
-    args.add(ctx.outputs.artifact.path)
-    args.add("-o", path)
-    args.add("-c", ctx.attr.compression)
-
-    ctx.actions.run(
-        mnemonic = "PackageZip",
-        executable = ctx.executable._build_zip,
+    ctx.actions.run_shell(
         inputs = [ctx.outputs.artifact],
-        outputs = [path],
-        arguments = [args],
-        use_default_shell_env = True,
+        outputs = [zip_artifact],
+        command = "(d=${PWD}; cd %s; zip -%s -q -r ${d}/%s .)" % (ctx.outputs.artifact.path, ctx.attr.compression, zip_artifact.path),
+        mnemonic = "PackageZip",
     )
 
-    return path
+    return zip_artifact
 
 def _web_ext_impl(ctx):
     data_path = compute_data_path(ctx.outputs.artifact, ctx.attr.strip_prefix)
@@ -139,11 +132,6 @@ If absent, no CRX package will be created.""",
     ),
     "_build_crx": attr.label(
         default = Label("@build_bazel_rules_web_ext//internal/web_ext:crx_bin"),
-        cfg = "exec",
-        executable = True,
-    ),
-    "_build_zip": attr.label(
-        default = Label("@build_bazel_rules_web_ext//internal/web_ext:zip_bin"),
         cfg = "exec",
         executable = True,
     ),

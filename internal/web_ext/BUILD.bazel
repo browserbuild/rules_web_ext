@@ -32,10 +32,3 @@ nodejs_binary(
     entry_point = ":crx.js",
     templated_args = ["--nobazel_run_linker"],
 )
-
-nodejs_binary(
-    name = "zip_bin",
-    data = ["@build_bazel_rules_browserbuild_web_ext_deps//:node_modules"],
-    entry_point = ":zip.js",
-    templated_args = ["--nobazel_run_linker"],
-)
