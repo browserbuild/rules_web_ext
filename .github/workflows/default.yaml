@@ -23,7 +23,7 @@ jobs:
         run: |
           TOOLS_DIR="${HOME}/.cache/tools"
           mkdir -p "${TOOLS_DIR}/bin"
-          curl -Ls -o "${TOOLS_DIR}/bin/bazel" "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.4/bazelisk-linux-amd64"
+          curl -Ls -o "${TOOLS_DIR}/bin/bazel" "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.5/bazelisk-linux-amd64"
           chmod +x "${TOOLS_DIR}/bin/bazel"
           echo "${TOOLS_DIR}/bin" >> $GITHUB_PATH
       - name: Mount bazel cache
