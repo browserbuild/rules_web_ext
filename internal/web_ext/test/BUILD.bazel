@@ -10,47 +10,47 @@ js_library(
 web_ext(
     name = "test_rsa_web_ext",
     srcs = [
+        "static_file",
+        "subdirectory/data.json",
         ":foo",
-        ":static_file",
-        ":subdirectory/data.json",
     ],
-    crx_key = ":rsa.pem",
-    manifest = ":manifest_foo.json",
+    crx_key = "rsa.pem",
+    manifest = "manifest_foo.json",
     strip_prefix = "/internal/web_ext/test",
 )
 
 web_ext(
     name = "test_ecdsa_web_ext",
     srcs = [
+        "static_file",
+        "subdirectory/data.json",
         ":foo",
-        ":static_file",
-        ":subdirectory/data.json",
     ],
-    crx_key = ":ecdsa.pem",
-    manifest = ":manifest_foo.json",
+    crx_key = "ecdsa.pem",
+    manifest = "manifest_foo.json",
     strip_prefix = "/internal/web_ext/test",
 )
 
 web_ext(
     name = "test_zip_web_ext",
     srcs = [
+        "static_file",
+        "subdirectory/data.json",
         ":foo",
-        ":static_file",
-        ":subdirectory/data.json",
     ],
-    manifest = ":manifest_foo.json",
+    manifest = "manifest_foo.json",
     strip_prefix = "/internal/web_ext/test",
 )
 
 web_ext(
     name = "test_rsa_crx_web_ext",
     srcs = [
+        "static_file",
+        "subdirectory/data.json",
         ":foo",
-        ":static_file",
-        ":subdirectory/data.json",
     ],
-    crx_key = ":rsa.pem",
-    manifest = ":manifest_foo.json",
+    crx_key = "rsa.pem",
+    manifest = "manifest_foo.json",
     strip_prefix = "/internal/web_ext/test",
     zip = False,
 )
@@ -58,25 +58,22 @@ web_ext(
 web_ext(
     name = "test_ecdsa_crx_web_ext",
     srcs = [
+        "static_file",
+        "subdirectory/data.json",
         ":foo",
-        ":static_file",
-        ":subdirectory/data.json",
     ],
-    crx_key = ":ecdsa.pem",
-    manifest = ":manifest_foo.json",
+    crx_key = "ecdsa.pem",
+    manifest = "manifest_foo.json",
     strip_prefix = "/internal/web_ext/test",
     zip = False,
 )
 
 jasmine_node_test(
     name = "test",
-    srcs = [
-        ":web_ext.spec.js",
-        "//internal/web_ext:crx3.pb.js",
-    ],
+    srcs = ["web_ext.spec.js"],
     data = [
-        ":ecdsa.pem",
-        ":rsa.pem",
+        "ecdsa.pem",
+        "rsa.pem",
         ":test_ecdsa_web_ext",
         ":test_rsa_web_ext",
     ],
@@ -86,7 +83,5 @@ jasmine_node_test(
         "$(locations //internal/web_ext/test:rsa.pem)",
         "$(locations //internal/web_ext/test:ecdsa.pem)",
     ],
-    deps = [
-        "@build_bazel_rules_browserbuild_web_ext_deps//protobufjs",
-    ],
+    deps = ["//internal/web_ext:crx3_proto_lib"],
 )

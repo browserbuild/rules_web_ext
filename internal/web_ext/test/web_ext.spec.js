@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const fs = require('fs');
-const crx3_proto = require('./../crx3.pb');
+const path = require('path');
+const crx3_proto =
+    require('build_bazel_rules_browserbuild_web_ext_deps/internal/crx3.pb');
 const runfiles = require(process.env['BAZEL_NODE_RUNFILES_HELPER']);
 
 const args = process.argv.slice(2);
@@ -32,7 +34,7 @@ describe('web_ext', () => {
     it('validates the CRX package signature', () => {
       function validateCrx(data, privateKeyObject) {
         // Validate the CRX magic number
-        expect(data.slice(0, 4).toString()).toEqual("Cr24");
+        expect(data.slice(0, 4).toString()).toEqual('Cr24');
 
         // Validate the CRX version
         expect(data.slice(4, 8).readUInt32LE(0)).toEqual(3);
@@ -95,25 +97,26 @@ describe('web_ext', () => {
   });
 
   it('copies files', () => {
-    const filepath = `${testWebExtArtifactPath}/static_file`;
+    const filepath = path.join(testWebExtArtifactPath, 'static_file');
     const data = fs.readFileSync(filepath, 'utf-8').trim();
     expect(data).toEqual('content');
   });
 
   it('copies files', () => {
-    const filepath = `${testWebExtArtifactPath}/foo.js`;
+    const filepath = path.join(testWebExtArtifactPath, 'foo.js');
     const data = fs.readFileSync(filepath, 'utf-8').trim();
     expect(data).toEqual('console.log("hello world");');
   });
 
   it('copies files from subdirectories', () => {
-    const filepath = `${testWebExtArtifactPath}/subdirectory/data.json`;
+    const filepath =
+        path.join(testWebExtArtifactPath, 'subdirectory', 'data.json');
     const data = fs.readFileSync(filepath, 'utf-8').trim();
     expect(data).toEqual('[]');
   });
 
   it('copies and renames the manifest.json file to the root directory', () => {
-    const filepath = `${testWebExtArtifactPath}/manifest.json`;
+    const filepath = path.join(testWebExtArtifactPath, 'manifest.json');
     expect(fs.existsSync(filepath)).toBe(true);
   });
 });

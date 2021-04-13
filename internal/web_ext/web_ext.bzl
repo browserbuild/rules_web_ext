@@ -25,10 +25,13 @@ def _create_artifact(ctx, inputs, arg_file):
     args.add("-o", ctx.outputs.artifact.path)
 
     ctx.actions.run(
+        progress_message = "Creating artifact %s" % arg_file.path,
         executable = ctx.executable._build_artifact,
         inputs = inputs,
         outputs = [ctx.outputs.artifact],
         arguments = [args],
+        use_default_shell_env = True,
+        mnemonic = "Artifact",
     )
 
 def _create_crx(ctx):
@@ -41,6 +44,7 @@ def _create_crx(ctx):
     args.add("--key", ctx.file.crx_key)
 
     ctx.actions.run(
+        progress_message = "Creating CRX %s" % crx_artifact.path,
         executable = ctx.executable._build_crx,
         inputs = [ctx.file.crx_key] + [ctx.outputs.artifact],
         outputs = [crx_artifact],
@@ -55,6 +59,7 @@ def _create_zip(ctx):
     zip_artifact = ctx.actions.declare_file("%s.zip" % ctx.label.name)
 
     ctx.actions.run_shell(
+        progress_message = "Creating ZIP %s" % zip_artifact.path,
         inputs = [ctx.outputs.artifact],
         outputs = [zip_artifact],
         command = "(d=${PWD}; cd %s; zip -%s -q -r ${d}/%s .)" % (ctx.outputs.artifact.path, ctx.attr.compression, zip_artifact.path),
@@ -125,10 +130,9 @@ If absent, no CRX package will be created.""",
         default = True,
     ),
     "_build_artifact": attr.label(
-        default = Label("@build_bazel_rules_web_ext//internal/web_ext:build_artifact"),
+        default = Label("@build_bazel_rules_web_ext//internal/web_ext:artifact_bin"),
         cfg = "exec",
         executable = True,
-        allow_files = True,
     ),
     "_build_crx": attr.label(
         default = Label("@build_bazel_rules_web_ext//internal/web_ext:crx_bin"),

@@ -2,14 +2,7 @@
  * no-magic-numbers, no-prototype-builtins, no-redeclare, no-shadow, no-var,
  * sort-vars*/
 (function(global, factory) { /* global define, require, module */
-
-/* AMD */ if (typeof define === 'function' && define.amd)
-  define('pizza_pay/proto/crx3', [ "protobufjs/minimal" ], factory);
-
-/* CommonJS */ else if (typeof require === 'function' &&
-                        typeof module === 'object' && module && module.exports)
-  module.exports = factory(require("protobufjs/minimal"));
-
+module.exports = factory(require("protobufjs/minimal"));
 })(this, function($protobuf) {
 "use strict";
 

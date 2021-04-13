@@ -19,7 +19,8 @@ const child_process = require('child_process');
 const crypto = require('crypto');
 const fs = require('fs');
 const minimist = require('minimist');
-const crx3_proto = require('./crx3.pb');
+const crx3_proto =
+    require('build_bazel_rules_browserbuild_web_ext_deps/internal/crx3.pb');
 
 // CRX ID (16 bytes)
 const CRX_ID_SIZE = 16;
@@ -53,13 +54,13 @@ const privateKeyObject =
     crypto.createPrivateKey(fs.readFileSync(args.key, 'utf8'));
 
 if (privateKeyObject.type !== 'private') {
-  console.error("Error: Not a valid key type (expected key type \"private\")");
+  console.error('Error: Not a valid key type (expected key type \'private\')');
   process.exit(1);
 } else if (privateKeyObject.asymmetricKeyType !== 'rsa' &&
            privateKeyObject.asymmetricKeyType !== 'ec') {
   console.error(
-      "Error: Not a valid private key type. Allowed private key types are \"rsa\" (RSA) or \"ec\" (ECDSA). Found \"" +
-      privateKeyObject.asymmetricKeyType + "\"");
+      'Error: Not a valid private key type. Allowed private key types are \'rsa\' (RSA) or \'ec\' (ECDSA). Found \'' +
+      privateKeyObject.asymmetricKeyType + '\'');
   process.exit(1);
 }
 
@@ -99,7 +100,7 @@ const crxFileHeader = crx3_proto.crx_file.CrxFileHeader
                           }))
                           .finish();
 
-// CRX magic number ("Cr24")
+// CRX magic number (Cr24)
 const crxMagic = Buffer.from('Cr24', 'utf8');
 
 // CRX version (3)

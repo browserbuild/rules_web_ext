@@ -1,5 +1,5 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+load("@build_bazel_rules_nodejs//:index.bzl", "js_library", "nodejs_binary")
 
 licenses(["notice"])  # Apache 2.0
 
@@ -16,19 +16,26 @@ bzl_library(
 )
 
 nodejs_binary(
-    name = "build_artifact",
+    name = "artifact_bin",
     data = ["@build_bazel_rules_browserbuild_web_ext_deps//:node_modules"],
-    entry_point = ":artifact.js",
+    entry_point = "artifact.js",
     templated_args = ["--nobazel_run_linker"],
+)
+
+js_library(
+    name = "crx3_proto_lib",
+    package_name = "build_bazel_rules_browserbuild_web_ext_deps/internal",
+    srcs = [":crx3.pb.js"],
+    deps = ["@build_bazel_rules_browserbuild_web_ext_deps//protobufjs"],
 )
 
 nodejs_binary(
     name = "crx_bin",
     data = [
-        ":crx.js",
-        ":crx3.pb.js",
+        "crx.js",
+        ":crx3_proto_lib",
         "@build_bazel_rules_browserbuild_web_ext_deps//:node_modules",
     ],
-    entry_point = ":crx.js",
+    entry_point = "crx.js",
     templated_args = ["--nobazel_run_linker"],
 )

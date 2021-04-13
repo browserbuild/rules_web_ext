@@ -6,39 +6,74 @@ on:
   pull_request: {}
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: ${{ matrix.os }} (Bazel ${{ matrix.bazel-version }})
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        bazel-version:
-          - 3.5.1
-          - 3.6.0
-          - 3.7.1
-          - 3.7.2
-          - 4.0.0
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        bazel-version: [3.6.0, 3.7.2, 4.0.0]
+        include:
+          # ubuntu-latest
+          - os: ubuntu-latest
+            bazel-cache: ~/.cache/bazel
+
+          # macos-latest
+          - os: macos-latest
+            bazel-cache: /var/tmp/_bazel_runner/cache
+
+          # windows-latest
+          - os: windows-latest
+            bazel-cache: |
+              "C:\users\runneradmin\_bazel_runneradmin\cache"
     env:
       USE_BAZEL_VERSION: ${{ matrix.bazel-version }}
     steps:
       - uses: actions/checkout@v2
-      - name: Setup bazel
+
+      # ubuntu-latest + macos-latest
+      - name: Setup bazel (Unix)
+        if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
+        env:
+          BAZELISK_BIN: ${{ matrix.bazelisk-bin }}
         run: |
-          TOOLS_DIR="${HOME}/.cache/tools"
-          mkdir -p "${TOOLS_DIR}/bin"
-          curl -Ls -o "${TOOLS_DIR}/bin/bazel" "https://github.com/bazelbuild/bazelisk/releases/download/v1.7.5/bazelisk-linux-amd64"
-          chmod +x "${TOOLS_DIR}/bin/bazel"
-          echo "${TOOLS_DIR}/bin" >> $GITHUB_PATH
+          mkdir -p "${GITHUB_WORKSPACE}/bin"
+          curl -Ls "https://github.com/bazelbuild/bazelisk/releases/latest/download/${BAZELISK_BIN}" -o "${GITHUB_WORKSPACE}/bin/bazel"
+          chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
+          bazel info
+
+      # windows-latest
+      - name: Setup MSYS2 (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: msys2/setup-msys2@v2
+        with:
+          install: zip unzip patch diffutils
+      - name: Setup bazel (Windows)
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          mkdir %APPDATA%\bin
+          Invoke-WebRequest "https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-windows-amd64.exe" -OutFile "%APPDATA%\bin\bazel.exe"
+          set "PATH=%PATH%;%APPDATA%\bin"
+          echo "BAZEL_SH=C:\msys64\usr\bin\bash.exe" | Out-File -FilePath $Env:GITHUB_ENV -Append
+          fsutil 8dot3name set 0
+          bazel info
+
       - name: Mount bazel cache
         uses: actions/cache@v1
         with:
-          path: ~/.cache/bazel
-          key: bazel-${{ matrix.bazel-version }}-${{ github.sha }}
+          path: ${{ matrix.bazel-cache }}
+          key: ${{ runner.os }}-bazel-${{ matrix.bazel-version }}-${{ github.sha }}
           restore-keys: |
-            bazel-${{ matrix.bazel-version }}-
-            bazel-
+            ${{ runner.os }}-bazel-${{ matrix.bazel-version }}-
+            ${{ runner.os }}-bazel-
       - name: Run bazel @nodejs//:yarn
         run: bazel run @nodejs//:yarn
       - name: Run bazel check
+        if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
         run: yarn run bazel:format-check && yarn run bazel:lint
       - name: Run bazel build
         run: bazel build //... --announce_rc --noshow_progress --verbose_failures --local_ram_resources=7000
+
+      # ubuntu-latest + macos-latest
       - name: Run bazel test
+        if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
         run: bazel test //... --announce_rc --noshow_progress --verbose_failures --local_ram_resources=7000 --test_output=all
