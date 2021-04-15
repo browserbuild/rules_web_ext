@@ -6,7 +6,7 @@ on:
   pull_request: {}
 jobs:
   build:
-    name: ${{ matrix.os }} (Bazel ${{ matrix.bazel-version }})
+    name: ${{ matrix.os }} bazel ${{ matrix.bazel-version }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -33,12 +33,7 @@ jobs:
       # ubuntu-latest + macos-latest
       - name: Setup bazel (Unix)
         if: ${{ matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest' }}
-        env:
-          BAZELISK_BIN: ${{ matrix.bazelisk-bin }}
         run: |
-          mkdir -p "${GITHUB_WORKSPACE}/bin"
-          curl -Ls "https://github.com/bazelbuild/bazelisk/releases/latest/download/${BAZELISK_BIN}" -o "${GITHUB_WORKSPACE}/bin/bazel"
-          chmod +x "${GITHUB_WORKSPACE}/bin/bazel"
           bazel info
 
       # windows-latest
