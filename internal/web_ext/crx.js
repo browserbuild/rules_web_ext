@@ -50,6 +50,11 @@ const zipProcess = child_process.spawnSync(
         {cwd : artifactPath[0], stdio : [ 'inherit', 'pipe', 'inherit' ], maxBuffer : process.env.WEB_EXT_MAX_BUFFER
                 ? Number(process.env.WEB_EXT_MAX_BUFFER) : 4e+6}));
 
+if (zipProcess.error) {
+  console.error('Error: \'zip\' failed', zipProcess.stderr.toString());
+  process.exit(zipProcess.status);
+}
+
 const privateKeyObject =
     crypto.createPrivateKey(fs.readFileSync(args.key, 'utf8'));
 
